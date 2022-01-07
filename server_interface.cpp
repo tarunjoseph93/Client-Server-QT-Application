@@ -324,9 +324,9 @@ void Server_Interface::onClientDisconnected()
 //        }
 //    }
 
-    for(auto i : client_list)
+    for(QTcpSocket* sock : client_list)
     {
-        if (i == clientSocket)
+        if (sock == clientSocket)
         {
             client_list.remove(clientSocket);
             clientSocket->abort();
