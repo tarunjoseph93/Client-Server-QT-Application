@@ -30,7 +30,7 @@ void Server_Interface::ServerOnOrOff()
         server->close();
         ui->pushButton_startServer->setText("Start Server");
 
-        discardAllClients();
+//        discardAllClients();
     }
     else
     {
@@ -78,7 +78,7 @@ void Server_Interface::onReadyRead()
     qDebug() << "Data In: " << data;
 
     QStringList dataRead = QString(data).split(":");
-    qDebug() <<"Read Data: " << dataRead[0] << " " << dataRead[1];
+    qDebug() <<"Read Data: " << dataRead;
 
     signal = dataRead[0];
 
@@ -91,8 +91,8 @@ void Server_Interface::onReadyRead()
     else if (signal == "PRIVMES")
         command = 3;
 
-    else if (signal == "PRIV_CHAT_REQ")
-        command = 4;
+//    else if (signal == "PRIV_CHAT_REQ")
+//        command = 4;
     else if (signal == "REGISTER")
         command = 5;
 
@@ -104,6 +104,7 @@ void Server_Interface::onReadyRead()
         break;
     }
     case 2:
+    {
         sendActiveUsersList();
         break;
     }
@@ -112,12 +113,17 @@ void Server_Interface::onReadyRead()
         recievePrivateMessage(dataRead[1],dataRead[2],dataRead[3]);
         break;
     }
-    case 4:
-        privateChatClientCheck(dataRead[1],dataRead[2]);
-        break;
+//    case 4:
+//    {
+//        privateChatClientCheck(dataRead[1],dataRead[2]);
+//        break;
+//    }
+
 
     }
 }
+
+
 
 void Server_Interface::checkLoginCreds(QString &username, QString &password)
 {
@@ -240,25 +246,27 @@ void Server_Interface::setUserOnline(QString &uname)
     connClose();
 }
 
-void Server_Interface::privateChatClientCheck(QString &sender, QString &receiver)
-{
-    for(int i=0; i < onlineUsers.length(); i++)
-    {
-        if(onlineUsers[i].first != receiver)
-        {
-            sendPrivateChatFail(sender, receiver);
-        }
-        else
-        {
-            sendPrivateChatPass(sender, receiver);
-        }
-    }
-}
+//void Server_Interface::privateChatClientCheck(QString &sender, QString &receiver)
+//{
+//    qDebug() << sender << receiver;
+//    qDebug() << onlineUsers[0].first << onlineUsers[1].first;
+//    for(int i=0; i < onlineUsers.length(); i++)
+//    {
+//        if(onlineUsers[i].first == receiver)
+//        {
+//            sendPrivateChatPass(sender, receiver);
+//        }
+//        else
+//        {
+//            sendPrivateChatFail(sender, receiver);
+//        }
+//    }
+//}
 
 void Server_Interface::sendPrivateChatPass(QString &sender, QString &receiver)
 {
     QByteArray ba;
-    ba.append("PRIV_MSG_PASS:" + sender.toUtf8() + receiver.toUtf8());
+    ba.append("PRIV_MSG_PASS:" + sender.toUtf8() + ":" + receiver.toUtf8());
     qDebug() << "Failed to open chat from: " << sender << " to: " << receiver;
     for(int i = 0; i< onlineUsers.length(); ++i)
     {
@@ -273,33 +281,33 @@ void Server_Interface::recievePrivateMessage(QString &sender, QString &receiver,
 {
     for(int i=0; i < onlineUsers.length(); i++)
     {
-        if(onlineUsers[i].first != receiver)
+        if(onlineUsers[i].first == receiver)
         {
-            sendPrivateChatFail(sender, receiver);
+            QByteArray ba;
+            ba.append("PRIV_MSG_RCV:" + sender.toUtf8() + ":" + message.toUtf8());
+            qDebug() << "Sending message from: " << sender << " to " << receiver;
+            onlineUsers[i].second->write(ba);
         }
         else
         {
-            QByteArray ba;
-            ba.append("PRIV_MSG_RCV:" + sender.toUtf8() + message.toUtf8());
-            qDebug() << "Sending message from: " << sender << " to " << receiver;
-            onlineUsers[i].second->write(ba);
+            qDebug() << "Could not send " << message << " to: " << receiver << " from: " << sender;
         }
     }
 }
 
-void Server_Interface::sendPrivateChatFail(QString &sender, QString &receiver)
-{
-    QByteArray ba;
-    ba.append("PRIV_MSG_FAIL:" + sender.toUtf8() + receiver.toUtf8());
-    qDebug() << "Failed to open chat from: " << sender << " to: " << receiver;
-    for(int i = 0; i< onlineUsers.length(); ++i)
-    {
-        if(onlineUsers[i].first == sender)
-        {
-            onlineUsers[i].second->write(ba);
-        }
-    }
-}
+//void Server_Interface::sendPrivateChatFail(QString &sender, QString &receiver)
+//{
+//    QByteArray ba;
+//    ba.append("PRIV_MSG_FAIL:" + sender.toUtf8() + ":" + receiver.toUtf8());
+//    qDebug() << "Failed to open chat from: " << sender << " to: " << receiver;
+//    for(int i = 0; i< onlineUsers.length(); ++i)
+//    {
+//        if(onlineUsers[i].first == sender)
+//        {
+//            onlineUsers[i].second->write(ba);
+//        }
+//    }
+//}
 
 
 void Server_Interface::onClientDisconnected()
