@@ -61,7 +61,7 @@ public:
     }
 
     void ServerOnOrOff();
-//    void discardAllClients();
+    void discardAllClients();
 
 public slots:
     void logMessage(const QString &msg);
@@ -73,16 +73,19 @@ public slots:
     void loginDuplicate(QString &creds);
     void setUserOnline(QString &uname);
     void sendActiveUsersList();
+    void sendProfileInfo();
 //    void privateChatClientCheck(QString &sender, QString &receiver);
     void recievePrivateMessage(QString &sender, QString &receiver, QString &text);
 //    void sendPrivateChatFail(QString &sender, QString &receiver);
-    void sendPrivateChatPass(QString &sender, QString &receiver);
+    void sendPrivateChatMessage(QString &sender, QString &receiver);
 //    void sendMessage(QTcpSocket* client, QByteArray &ba);
+    void newRegistration(QStringList &list);
+    void newProfInfo(QStringList &list);
+    void groupChatRequest(QString &grpName);
 
 private slots:
     void newConnectionMade();
 //    void sendLoginCheck(QString &uname,bool &status);
-    void on_pushButton_refreshActiveList_clicked();
 
 
 signals:
@@ -93,6 +96,6 @@ private:
     QSet<QTcpSocket*> client_list;
     QTcpSocket *serverSocket;
     QVector<QPair<QString,QTcpSocket*>> onlineUsers;
-    QStringList tempList;
+    QString groupChatName;
 };
 #endif // SERVER_INTERFACE_H

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1105</width>
+    <width>926</width>
     <height>933</height>
    </rect>
   </property>
@@ -19,23 +19,26 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Test-Server</string>
+   <string>Server</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
   </property>
   <widget class="QPlainTextEdit" name="plainTextEdit_serverLog">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>120</y>
-     <width>391</width>
-     <height>791</height>
+     <x>30</x>
+     <y>100</y>
+     <width>631</width>
+     <height>781</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_startServer">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>10</y>
+     <x>690</x>
+     <y>760</y>
      <width>201</width>
      <height>111</height>
     </rect>
@@ -44,56 +47,17 @@
     <string>Start Server</string>
    </property>
   </widget>
-  <widget class="QListView" name="listView_activeUsers">
-   <property name="geometry">
-    <rect>
-     <x>745</x>
-     <y>130</y>
-     <width>341</width>
-     <height>781</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_refreshActiveList">
-   <property name="geometry">
-    <rect>
-     <x>620</x>
-     <y>10</y>
-     <width>201</width>
-     <height>111</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Refresh List</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_serverLogs">
    <property name="geometry">
     <rect>
-     <x>16</x>
-     <y>16</y>
+     <x>20</x>
+     <y>20</y>
      <width>381</width>
      <height>81</height>
     </rect>
    </property>
    <property name="text">
     <string>Server Logs</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_activeUsers">
-   <property name="geometry">
-    <rect>
-     <x>820</x>
-     <y>20</y>
-     <width>271</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Active Users</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
