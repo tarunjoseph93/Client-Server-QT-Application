@@ -336,16 +336,21 @@ void Server_Interface::onClientDisconnected()
         {
             connOpen();
             QSqlQuery qry;
-            qry.exec("update Clients set isLoggedIn='false' where username='"+ onlineUsers[i].first +"'");
+            QString username=onlineUsers[i].first;
+            QString status = "False";
+            qry.prepare("update Clients set isLoggedIn=:false where username=:username");
+            qry.bindValue("::false", status);
+            qry.bindValue(":username", username);
+            qry.exec();
             connClose();
         }
     }
 
-    for(QTcpSocket* sock : client_list)
+    for(auto i : client_list)
     {
-        if (sock == clientSocket)
+        if (i == clientSocket)
         {
-            clientSocket->disconnectFromHost();
+            clientSocket->close();
             client_list.remove(clientSocket);
             QString message = "Client disconnected.";
             logMessage(message);

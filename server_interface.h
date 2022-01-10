@@ -73,11 +73,8 @@ public slots:
     void setUserOnline(QString &uname);
     void sendActiveUsersList();
     void sendProfileInfo();
-//    void privateChatClientCheck(QString &sender, QString &receiver);
     void recievePrivateMessage(QString &sender, QString &receiver, QString &text);
-//    void sendPrivateChatFail(QString &sender, QString &receiver);
     void sendPrivateChatMessage(QString &sender, QString &receiver);
-//    void sendMessage(QTcpSocket* client, QByteArray &ba);
     void newRegistration(QStringList &list);
     void newProfInfo(QStringList &list);
     void sendContactsList();
@@ -85,8 +82,6 @@ public slots:
 
 private slots:
     void newConnectionMade();
-//    void sendLoginCheck(QString &uname,bool &status);
-
 
 signals:
 
