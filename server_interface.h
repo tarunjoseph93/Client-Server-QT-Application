@@ -61,7 +61,6 @@ public:
     }
 
     void ServerOnOrOff();
-    void discardAllClients();
 
 public slots:
     void logMessage(const QString &msg);
@@ -81,7 +80,8 @@ public slots:
 //    void sendMessage(QTcpSocket* client, QByteArray &ba);
     void newRegistration(QStringList &list);
     void newProfInfo(QStringList &list);
-    void groupChatRequest(QString &grpName);
+    void sendContactsList();
+    void refreshList();
 
 private slots:
     void newConnectionMade();
@@ -96,6 +96,5 @@ private:
     QSet<QTcpSocket*> client_list;
     QTcpSocket *serverSocket;
     QVector<QPair<QString,QTcpSocket*>> onlineUsers;
-    QString groupChatName;
 };
 #endif // SERVER_INTERFACE_H

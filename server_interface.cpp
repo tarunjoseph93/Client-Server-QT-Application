@@ -29,8 +29,6 @@ void Server_Interface::ServerOnOrOff()
         qDebug() << message;
         server->close();
         ui->pushButton_startServer->setText("Start Server");
-
-        discardAllClients();
     }
     else
     {
@@ -97,8 +95,10 @@ void Server_Interface::onReadyRead()
         command = 5;
     else if (signal == "NEW_PROF_INFO")
         command = 6;
-    else if (signal == "GROUP_CHAT_REQ")
+    else if (signal == "GET_CONTACTS")
         command=7;
+    else if (signal == "REFRESH")
+        command=8;
 
     switch(command)
     {
@@ -135,7 +135,12 @@ void Server_Interface::onReadyRead()
     }
     case 7:
     {
-        groupChatRequest(dataRead[1]);
+        sendContactsList();
+        break;
+    }
+    case 8:
+    {
+        refreshList();
         break;
     }
     }
@@ -387,6 +392,64 @@ void Server_Interface::sendActiveUsersList()
     }
 }
 
+void Server_Interface::refreshList()
+{
+    QTcpSocket *clientSocket = static_cast<QTcpSocket *>(QObject::sender());
+
+    for(auto i : client_list)
+    {
+        if (i == clientSocket)
+        {
+            connOpen();
+            QStringList refreshList;
+            QSqlQuery qry;
+            qry.prepare("select username from Clients where isLoggedIn='True'");
+            if(qry.exec())
+            {
+                while(qry.next())
+                {
+                   refreshList << qry.value(0).toString();
+                }
+            }
+            qDebug() << "Refreshed List: " << refreshList;
+            QString data = refreshList.join(":");
+            QByteArray ba;
+            ba.append("REFRESH_LIST:" + data.toUtf8());
+            clientSocket->write(ba);
+            connClose();
+        }
+    }
+}
+
+void Server_Interface::sendContactsList()
+{
+    QTcpSocket *clientSocket = static_cast<QTcpSocket *>(QObject::sender());
+
+    for(auto i : client_list)
+    {
+        if (i == clientSocket)
+        {
+            connOpen();
+            QStringList contactsList;
+            QSqlQuery qry;
+            qry.prepare("select firstName from Clients");
+            if(qry.exec())
+            {
+                while(qry.next())
+                {
+                   contactsList << qry.value(0).toString();
+                }
+            }
+            qDebug() << "Contacts List: " << contactsList;
+            QString data = contactsList.join(":");
+            QByteArray ba;
+            ba.append("CONTACT_LIST:" + data.toUtf8());
+            clientSocket->write(ba);
+            connClose();
+        }
+    }
+}
+
 
 void Server_Interface::sendProfileInfo()
 {
@@ -480,8 +543,8 @@ void Server_Interface::newProfInfo(QStringList &list)
     }
 }
 
-void Server_Interface::discardAllClients()
-{
+//void Server_Interface::discardAllClients()
+//{
 //    connOpen();
 //    for(int i=0; i<onlineUsers.length();i++)
 //    {
@@ -495,36 +558,10 @@ void Server_Interface::discardAllClients()
 //    }
 //    connClose();
 
-    foreach(QTcpSocket* sock,client_list)
-    {
-        sock->disconnectFromHost();
-    }
-}
+//    foreach(QTcpSocket* sock,client_list)
+//    {
+//        sock->disconnectFromHost();
+//    }
+//}
 
-void Server_Interface::groupChatRequest(QString &grpName)
-{
-    qDebug() << grpName;
-    QTcpSocket *clientSocket = static_cast<QTcpSocket *>(QObject::sender());
-
-    for(int i=0; i<onlineUsers.length(); i++)
-    {
-        if(onlineUsers[i].second == clientSocket)
-        {
-            QByteArray ba;
-            if(grpName != groupChatName)
-            {
-                grpName = groupChatName;
-                ba.append("GROUP_CHAT_CREATED:");
-                clientSocket->write(ba);
-
-            }
-            else
-            {
-                ba.append("GROUP_CHAT_ADD:");
-                clientSocket->write(ba);
-            }
-
-        }
-    }
-}
 
