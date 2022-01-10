@@ -97,8 +97,6 @@ void Server_Interface::onReadyRead()
         command = 6;
     else if (signal == "GET_CONTACTS")
         command=7;
-    else if (signal == "REFRESH")
-        command=8;
 
     switch(command)
     {
@@ -138,15 +136,8 @@ void Server_Interface::onReadyRead()
         sendContactsList();
         break;
     }
-    case 8:
-    {
-        refreshList();
-        break;
-    }
     }
 }
-
-
 
 void Server_Interface::checkLoginCreds(QString &username, QString &password)
 {
@@ -467,7 +458,6 @@ void Server_Interface::sendProfileInfo()
             QSqlQuery qry;
             qry.prepare("select * from Clients where username=:uname");
             qry.bindValue(":uname", name);
-//            qDebug() << qry.exec();
             if(qry.exec())
             {
                 QVector<QStringList> list;
@@ -542,26 +532,4 @@ void Server_Interface::newProfInfo(QStringList &list)
         }
     }
 }
-
-//void Server_Interface::discardAllClients()
-//{
-//    connOpen();
-//    for(int i=0; i<onlineUsers.length();i++)
-//    {
-//        foreach(QString uname, onlineUsers[i].first)
-//        {
-
-//            QSqlQuery qry;
-//            qry.exec("update Clients set isLoggedIn='False' where username='"+ uname +"'");
-
-//        }
-//    }
-//    connClose();
-
-//    foreach(QTcpSocket* sock,client_list)
-//    {
-//        sock->disconnectFromHost();
-//    }
-//}
-
 
